@@ -1,11 +1,13 @@
 from seat_reservation_system.seat_store import SeatStore
 from seat_reservation_system.seats import SEAT_IDS
 
+# 0610_예약 코드 안내 추가_sj
 HELP_TEXT = """Commands:
 list                      - List all seats
 reserve <seat_id> <name>  - Reserve a seat
 cancel <seat_id> [name]   - Cancel a reservation
 status <seat_id>          - Show seat status
+check <booking_code>      - Show reservation by booking code
 stats                     - Show summary stats
 help                      - Show this help
 exit                      - Exit the program"""
@@ -35,15 +37,26 @@ def run_cli():
             if command == "list":
                 for seat_id, name in store.list_seats():
                     _print_seat(seat_id, name)
+
+            # 0610_예약 안내 정보에 예약 코드 추가_sj
             elif command == "reserve":
                 _require_args(command, args, 2)
-                seat_id, name = store.reserve(int(args[0]), args[1])
+                seat_id, name, code = store.reserve(int(args[0]), args[1])
                 _print_seat(seat_id, name)
+                print(f"Booking code: {code}")  # 예약 코드 출력
+
             elif command == "cancel":
                 _require_args(command, args, 1)
                 name = args[1] if len(args) > 1 else None
                 seat_id, name = store.cancel(int(args[0]), name)
                 _print_seat(seat_id, name)
+
+            # 0610_예약 코드 확인 명령어 추가_sj
+            elif command == "check":
+                _require_args(command, args, 1)
+                seat_id, name = store.check_code(args[0])
+                _print_seat(seat_id, name)
+
             elif command == "status":
                 _require_args(command, args, 1)
                 seat_id, name = store.status(int(args[0]))
