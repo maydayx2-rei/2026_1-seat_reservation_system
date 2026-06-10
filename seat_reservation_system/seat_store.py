@@ -46,6 +46,27 @@ class SeatStore:
         seat_id = self._seat_codes[code]
         return seat_id, self._seats[seat_id]
     
+    # 0610_예약 코드 취소_sj
+    def cancel_by_code(self, code: str):
+        if code not in self._seat_codes:
+            raise ValueError("Invalid booking code.")
+        seat_id = self._seat_codes[code]
+        del self._seat_codes[code]
+        self._seats[seat_id] = None
+        return seat_id, None
+
+    # 0610_예약 코드 재발급_sj
+    def reissue_code(self, code: str, name: str):
+        if code not in self._seat_codes:
+            raise ValueError("Invalid booking code.")
+        seat_id = self._seat_codes[code]
+        if self._seats[seat_id] != name:
+            raise ValueError("Name does not match the reservation.")
+        del self._seat_codes[code]
+        new_code = self._generate_code(seat_id)
+        self._seat_codes[new_code] = seat_id
+        return seat_id, name, new_code
+
     def status(self, seat_id):
         return seat_id, self._get(seat_id)
 
